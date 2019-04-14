@@ -1,8 +1,13 @@
+""" ExcelReader - for reading data from excel files
+"""
+# pylint: disable=C0103
+
 import numpy as np
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter as gcl
 
 from .DataSet import DataSet
+
 
 class ExcelReader(object):
     """Excelreader - Wrapper for SetReader
@@ -23,10 +28,12 @@ class ExcelReader(object):
         self.sheets = {}
 
     def main(self):
+        """Main wrapper"""
         for sheet in self.wb.sheetnames:
             sr = SetReader(self.wb[sheet])
             sr.main()
             self.sheets[sheet] = sr.sets
+
 
 class SetReader(object):
     """SetReader - Read data from one sheet in an Excel file
@@ -41,6 +48,7 @@ class SetReader(object):
             ws (openpyxl.Worksheet): handle to worksheet
         """
         self.ws = ws
+        self.sets = {}
 
     def main(self):
         """ Wrapper to get meta data and data
@@ -55,7 +63,6 @@ class SetReader(object):
         """
         # parse b column for start of read
         sets = []
-        self.sets = {}
         colB = self.ws['B']  # we know its in "B"
 
         # find all data starts
@@ -65,8 +72,8 @@ class SetReader(object):
 
         for _set in sets:
             cell = self.ws[gcl(_set[1]-1)+str(_set[0]-2)]
-            data  = DataSet()
-            data.row =  _set[0]+1
+            data = DataSet()
+            data.row = _set[0]+1
             data.col = _set[1]
             data.col_ = gcl(_set[1])
 
@@ -75,7 +82,7 @@ class SetReader(object):
     def _get_inner_dimensions(self):
         """ Get the dimensions of the innter matrix
         """
-        for k,v in self.sets.items():
+        for k, v in self.sets.items():
             n_cols = []
             n_rows = []
             idx = v.row
@@ -122,7 +129,7 @@ class SetReader(object):
     def _read_data(self):
         """ Read the actual data to an np array
         """
-        for k,v in self.sets.items():
+        for k, v in self.sets.items():
 
             # pre-alloc data
             data = []

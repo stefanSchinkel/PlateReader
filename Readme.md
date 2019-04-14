@@ -64,7 +64,7 @@ For example: Imagine an Excel with 3 sheets and 3 markers each then the ExcelRea
 >>FILE = '/path/to/your/file'
 >>er = ExcelReader(FILE)
 >>er.main()
->>print(er.sets)
+>>print(er.sheets)
 "Plate 1 " : {[
     "eGFP:484,517": {},
     "eBFP2:402,449": {},

@@ -116,6 +116,9 @@ SetReader reads the data from one sheet of the Excelfile and contains multiple e
 
 [See this script](examples/read_data.py)
 
+#### Load data for one and render it
+
+[See this script](examples/plot_data.py) and [the result](examples/plot_data.png)
 
 ## Limitations
 

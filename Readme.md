@@ -1,26 +1,31 @@
 # PlateReader
+#### Table of contents
+
+  - [About](#about)
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+  - [Screenshots](#screenshots)
+  - [Advanced Usage](#advanced-usage)
 
 A tool to read and plot data from a [Cytation 5](https://www.biotek.com/products/imaging-microscopy-cell-imaging-multi-mode-readers/cytation-5-cell-imaging-multi-mode-reader/) imaging Multi-Mode Reader produced by [Biotek](https://www.biotek.com/).
 
-## About
-
+## About <a name="about">
 The Cytation5 reader can store results in an Excel file. This tool reads such an Excel file (all sheets) and extracts the data sets stored. These data sets can the be plotted too (or just used for other analyses)
 
-## Requirements
+### Installation
+The installation is straight-forward and there are only few requirements
+
+#### Requirements
 
   - python 3 (tested in 3.7)
 
-
-## Installation
-
-The installation is straight-forward
-### clone repo
+#### clone repo
 
 ```sh
 git clone git@github.com:stefanSchinkel/PlateReader.git
 ```
 
-### setup virtual environment (optional, but recommended)
+#### setup virtual environment (optional, but recommended)
 
 In order not impact the host system, running everything in a virtual enviroment is recommended.
 
@@ -31,7 +36,7 @@ python -m -venv .venv
 source .venv/bin/activate
 ```
 
-### install dependencies
+#### install dependencies
 
 ```sh
 pip install -r requirements.txt
@@ -47,12 +52,15 @@ python3 PlateReader.py exportfile.xlxs
 
 By default, the PlateReader will read all sets in all sheets of the excel file and plot the data with a random (but consistent) colormap for each set and render the plots.
 
-### Screenshot
+### Screenshots
+<a name="screenshots">
 
 This is what rendered image of a 24 well plate with 9x9 measurement matrix looks like. ![miRFP670:637,678](screenshot.png)
 
 
 ### Advanced Usage
+
+
 #### ExcelReader
 
 The "heavy lifiting" is done by the the ExcelReader and SetReader class in [
@@ -101,6 +109,14 @@ SetReader reads the data from one sheet of the Excelfile and contains multiple e
     'outer_y': 6,       #  ""
     data: <np.array>}   # the actual data
 ```
+
+### Examples
+
+#### Load an excel file and extract data for one maker
+
+[See this script](examples/read_data.py)
+
+
 ## Limitations
 
   - currently marker names (in one work sheet) have to be unique

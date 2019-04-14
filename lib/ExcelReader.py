@@ -2,6 +2,7 @@ import numpy as np
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter as gcl
 
+from .DataSet import DataSet
 
 class ExcelReader(object):
     """Excelreader - Wrapper for SetReader
@@ -64,33 +65,12 @@ class SetReader(object):
 
         for _set in sets:
             cell = self.ws[gcl(_set[1]-1)+str(_set[0]-2)]
-            self.sets[cell.value] = {
-                "row": _set[0]+1,
-                "col": _set[1],
-                "col_": gcl(_set[1])
-            }
+            data  = DataSet()
+            data.row =  _set[0]+1
+            data.col = _set[1]
+            data.col_ = gcl(_set[1])
 
-    def _get_outer_dimensions(self):
-        """ Get the number of wells, layout of the plate
-        """
-        for k, v in self.sets.items():
-            # we stored the data start, not the header start!
-            row = str(v["row"]-1)
-            # we skip X Read/Y Read
-            col = v["col"]+2
-            labels = []
-            while col <= self.ws.max_column:
-                col_name = gcl(col)
-                cell = self.ws[col_name+row]
-                labels.append(cell.value)
-                col += 1
-
-            # process header for outer dimension
-            uniq = set([d[0] for d in labels])
-            v["labels"] = labels
-            v["n_wells"] = len(labels)
-            v["outer_x"] = len(uniq)
-            v["outer_y"] = int(len(labels)/len(uniq))
+            self.sets[cell.value] = data
 
     def _get_inner_dimensions(self):
         """ Get the dimensions of the innter matrix
@@ -98,8 +78,8 @@ class SetReader(object):
         for k,v in self.sets.items():
             n_cols = []
             n_rows = []
-            idx = v["row"]
-            idy = v["col"]
+            idx = v.row
+            idy = v.col
             while idx < self.ws.max_row:
                 idy_rows = gcl(idy)
                 val_x = self.ws[idy_rows+str(idx)].value
@@ -112,8 +92,32 @@ class SetReader(object):
                 n_cols.append(val_y)
                 idx += 1
 
-            v["inner_x"] = max(n_rows)
-            v["inner_y"] = max(n_cols)
+            v.inner_x = max(n_rows)
+            v.inner_y = max(n_cols)
+
+
+    def _get_outer_dimensions(self):
+        """ Get the number of wells, layout of the plate
+        """
+        for k, v in self.sets.items():
+            # we stored the data start, not the header start!
+            row = str(v.row -1)
+            # we skip X Read/Y Read
+            col = v.col + 2
+            labels = []
+            while col <= self.ws.max_column:
+                col_name = gcl(col)
+                cell = self.ws[col_name+row]
+                labels.append(cell.value)
+                col += 1
+
+            # process header for outer dimension
+            uniq = set([d[0] for d in labels])
+            v.labels = labels
+            v.n_wells = len(labels)
+            v.outer_x = len(uniq)
+            v.outer_y = int(len(labels)/len(uniq))
+
 
     def _read_data(self):
         """ Read the actual data to an np array
@@ -122,16 +126,16 @@ class SetReader(object):
 
             # pre-alloc data
             data = []
-            for i in range(v["n_wells"]):
-                data.append(np.zeros( (v["inner_x"], v["inner_y"]) ))
+            for i in range(v.n_wells):
+                data.append(np.zeros( (v.inner_x, v.inner_y) ))
 
-            n_rows = v["inner_x"] * v["inner_y"]
-            for iRow in range(v["row"], v["row"]+n_rows):
+            n_rows = v.inner_x * v.inner_y
+            for iRow in range(v.row, v.row+n_rows):
                 # np starts at 0, PlateReader at 1
-                inner_x = self.ws[gcl(v["col"])+str(iRow)].value -1
-                inner_y = self.ws[gcl(v["col"]+1)+str(iRow)].value -1
+                inner_x = self.ws[gcl(v.col)+str(iRow)].value -1
+                inner_y = self.ws[gcl(v.col+1)+str(iRow)].value -1
                 idx_outer = 0
-                for iCol in range(v["col"]+2, self.ws.max_column+1):
+                for iCol in range(v.col+2, self.ws.max_column+1):
                     cell = self.ws[gcl(iCol)+str(iRow)]
                     try:
                         val = int(cell.value)
@@ -142,4 +146,4 @@ class SetReader(object):
                     data[idx_outer][(inner_y,inner_x)] = val
                     idx_outer += 1
 
-                    v["data"] = data
+                    v.data = data

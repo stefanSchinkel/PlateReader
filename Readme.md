@@ -92,12 +92,12 @@ For example: Imagine an Excel with 3 sheets and 3 markers each then the ExcelRea
 
 #### SetReader
 
-SetReader reads the data from one sheet of the Excelfile and contains multiple entries (one for each marker). A marker entry is also a dict and has the following structure (continued from above example)
+SetReader reads the data from one sheet of the Excelfile and contains multiple entries (one for each marker). Each is an instance of the `DataSet` class and has the following structure (continued from above example)
 
 ```python
 # select on data set (the 3rd marker in the 3rd sheet)
 >> set_3_3 = er.sheets['Plate 3']['miRFP670:637,678']
->> print(set_3_3)
+>> print(vars(set_3_3))
 >>> {'row': 160,        # location of data in excel sheet
     'col': 2,           # ""
     'col_': 'B',        # "" (name of column)

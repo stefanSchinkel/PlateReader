@@ -32,7 +32,7 @@ In order not impact the host system, running everything in a virtual enviroment 
 
 ```sh
 # create a new enviroment (needed only once)
-python -m -venv .venv
+python -m venv .venv
 # activate the environment
 source .venv/bin/activate
 ```

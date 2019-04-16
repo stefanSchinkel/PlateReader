@@ -4,6 +4,7 @@
   - [About](#about)
   - [Installation](#installation)
   - [Basic Usage](#basic-usage)
+  - [Webinterface](#webinterface)
   - [Screenshots](#screenshots)
   - [Advanced Usage](#advanced-usage)
 
@@ -52,15 +53,17 @@ python3 PlateReader.py exportfile.xlxs
 
 By default, the PlateReader will read all sets in all sheets of the excel file and plot the data with a random (but consistent) colormap for each set and render the plots.
 
+### Webinterface
+
+There is a (very simple, and even uglier) web interface in place as well,  this will allow you to upload an Excelfile and return the plotted data.
+
 ### Screenshots
 <a name="screenshots">
 
-This is what rendered image of a 24 well plate with 9x9 measurement matrix looks like. ![miRFP670:637,678](screenshot.png)
+This is what rendered image of a 24 well plate with 7x7 measurement matrix looks like. ![miRFP670:637,678](screenshot.png)
 
 
 ### Advanced Usage
-
-
 #### ExcelReader
 
 The "heavy lifiting" is done by the the ExcelReader and SetReader class in [

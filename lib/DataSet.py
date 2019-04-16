@@ -3,9 +3,13 @@
 import random
 
 import numpy as np
-import matplotlib.pyplot as plt
+
+import matplotlib
+matplotlib.use('Agg')  # <- otherwise it breaks on macOS
+from matplotlib import pyplot as plt
 
 CMAPS = ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds']
+
 
 class DataSet(object):
     """Dataset as object"""
@@ -26,7 +30,7 @@ class DataSet(object):
         return "Dataset with {} wells at {}x{} resolution".format(
                 self.n_wells, self.inner_x, self.inner_y)
 
-    def _render(self, title="Result", savename=None, cmap=None):
+    def _render(self, title, cmap):
         """ Render the plot and return to caller
 
         Args:
@@ -68,26 +72,22 @@ class DataSet(object):
 
     def show(self, title="Result", cmap=None):
         """ Show the plot
-          Args:
+
+        Args:
             title (str): title of the plot (def: "Result")
             cmap (str): colormap to use (def: random choise)
         """
-        fig = self._render(title=title, cmap=cmap)
+        fig = self._render(title, cmap)
         plt.show()
 
     def plot(self, savename, title="Result",  cmap=None):
-        """ save the plot
-          Args:
+        """ Save the plot
+
+        Args:
             savename (str): path of savefile
             title (str): title of the plot (def: "Result")
             cmap (str): colormap to use (def: random choise)
         """
-        fig = self._render(title=title, cmap=cmap)
+        fig = self._render(title, cmap)
         plt.savefig(savename)
         plt.close(fig)
-        # if not savename:
-        #     plt.show()
-        # else:
-        #     print('saving plot')
-        #     FigureCanvas(fig).print_png(savename)
-        #     plt.close(fig)

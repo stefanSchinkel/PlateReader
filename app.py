@@ -3,7 +3,7 @@
 import os
 import uuid
 
-from flask import Flask, request, redirect, url_for, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash, send_from_directory
 from werkzeug.utils import secure_filename
 
 from lib.ExcelReader import ExcelReader
@@ -17,24 +17,26 @@ app = Flask(__name__)
 
 def allowed_file(filename):
     """Check incoming file for allowed types
-
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-def render_imgs(er):
+
+def render_images(er):
     """renders all data sets to a random name"""
 
-    img = {}
+    urls = {}
     for name, sheet in er.sheets.items():
-        img[name] = {}
+        urls[name] = {}
         for marker, data in sheet.items():
+            # savename (local) and urls for serving
             _id = str(uuid.uuid4()).split("-")[0] + ".png"
             savename = os.path.join(app.config['IMG_FOLDER'], _id)
-            title = "{}->{}".format(name, marker)
-            img[name][marker] = savename
-            # data.plot(title=title, savename=savename)
-    fig = data._render(title=title)
-    return img
+            urls[name][marker] = "/{}/{}".format(IMG_FOLDER, _id)
+            # default title and rendereing
+            title = "{}:{}".format(name, marker)
+            data.plot(title=title, savename=savename)
+
+    return urls
 
 def process_file(filename):
     """Process the excel file and return proper data
@@ -44,8 +46,8 @@ def process_file(filename):
     """
     er = ExcelReader(filename)
     er.main()
-    img = render_imgs(er)
-    print(img)
+    img = render_images(er)
+
     return render_template('view.html', sheets=er.sheets, images=img)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -69,9 +71,16 @@ def upload_file():
             filename = secure_filename(file.filename)
             save_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(save_name)
-            print("file uploaded")
 
         return process_file(save_name)
+
+# we need a route to serve the computed images
+@app.route('/images/<path:filepath>')
+def data(filepath):
+    fname = filepath.split('/')[-1]
+    return send_from_directory(app.config['IMG_FOLDER'], fname)
+
+
 if __name__ == '__main__':
     """main wrapper"""
     app.secret_key = b'_53k#-Lldk34sk++sl'
@@ -80,8 +89,11 @@ if __name__ == '__main__':
 
     try:
         os.makedirs(app.config['UPLOAD_FOLDER'])
-        os.makedirs(app.config['IMG_FOLDER'])
-
     except OSError:
         pass
+    try:
+        os.makedirs(app.config['IMG_FOLDER'])
+    except OSError:
+        pass
+
     app.run(host='0.0.0.0', port=1204, debug=True)

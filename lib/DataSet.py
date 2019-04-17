@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 CMAPS = ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds']
 
 
-class DataSet(object):
+class DataSet():
     """Dataset as object"""
     def __init__(self):
         self.row = None
@@ -23,12 +23,13 @@ class DataSet(object):
         self.outer_y = None
         self.labels = []
         self.n_wells = None
-        self.data = None
+        self.data = []
 
     def __str__(self):
         """Verbose info"""
         return "Dataset with {} wells at {}x{} resolution".format(
-                self.n_wells, self.inner_x, self.inner_y)
+            self.n_wells, self.inner_x, self.inner_y
+        )
 
     def _render(self, title, cmap):
         """ Render the plot and return to caller
@@ -43,7 +44,7 @@ class DataSet(object):
         RADIUS = np.sqrt(x_2**2 + y_2**2)
 
         ORIGIN = (x_2, y_2)
-        LIMITS = [x_2 - RADIUS, y_2 + RADIUS ]
+        LIMITS = [x_2 - RADIUS, y_2 + RADIUS]
         VMAX = np.amax(self.data)
 
         fig, axs = plt.subplots(self.outer_x, self.outer_y)
@@ -54,7 +55,7 @@ class DataSet(object):
             for col in range(self.outer_y):
                 idx = row*self.outer_y + col
                 ax = axs[row, col]
-                c = ax.pcolor(self.data[idx], cmap=cmap, vmin=0, vmax=VMAX)
+                ax.pcolor(self.data[idx], cmap=cmap, vmin=0, vmax=VMAX)
                 circle1 = plt.Circle(ORIGIN, RADIUS, color='k', fill=False)
                 ax.add_artist(circle1)
                 ax.set_xlim(LIMITS)
@@ -77,10 +78,11 @@ class DataSet(object):
             title (str): title of the plot (def: "Result")
             cmap (str): colormap to use (def: random choise)
         """
-        fig = self._render(title, cmap)
+        matplotlib.pyplot.switch_backend('TkAgg')
+        self._render(title, cmap)
         plt.show()
 
-    def plot(self, savename, title="Result",  cmap=None):
+    def plot(self, savename, title="Result", cmap=None):
         """ Save the plot
 
         Args:

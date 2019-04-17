@@ -1,13 +1,18 @@
 <html>
-<table>
-    <tr>
-    {% for key in sheets.keys() %}
-        <h2>{{ key }} </h2>
-        {% for marker in sheets[key].keys() %}
-            <h3> {{ marker }} </h3>
-            <img src="{{ images[key][marker] }}">
-        {% endfor %}
+
+<h2>Results</h2>
+<hr>
+<a href="/">BACK</a>
+<hr>
+<p><a href="data.xlsx">Data source</a></p>
+  {% for key in sheets.keys() %}
+    <h3>{{ key }} </h3>
+      {% for marker in sheets[key].keys() %}
+        <p> {{ marker }} </p>
+        <img src="{{ images[key][marker] }}">
+        <hr>
+        <a href="/">BACK</a>
     {% endfor %}
-    </tr>
-</table>
+  {% endfor %}
+
 </html>

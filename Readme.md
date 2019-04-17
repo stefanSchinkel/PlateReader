@@ -60,7 +60,7 @@ There is a (very simple, and even uglier) web interface in place as well,  this 
 ### Screenshots
 <a name="screenshots">
 
-This is what rendered image of a 24 well plate with 7x7 measurement matrix looks like. ![miRFP670:637,678](screenshot.png)
+This is what rendered image of a 24 well plate with 7x7 measurement matrix looks like. ![miRFP670:637,678](examples/plot_data.png)
 
 
 ### Advanced Usage

@@ -24,6 +24,7 @@ The installation is straight-forward and there are only few requirements
 
 ```sh
 git clone git@github.com:stefanSchinkel/PlateReader.git
+cd PlateReader
 ```
 
 #### setup virtual environment (optional, but recommended)
@@ -56,6 +57,12 @@ By default, the PlateReader will read all sets in all sheets of the excel file a
 ### Webinterface
 
 There is a (very simple, and even uglier) web interface in place as well,  this will allow you to upload an Excelfile and return the plotted data.
+It also keeps old plots and data files. To start the web app run:
+```sh
+python3 app.py
+```
+
+The app will be available at http://localhost:1204
 
 ### Screenshots
 <a name="screenshots">

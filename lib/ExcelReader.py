@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter as gcl
 from .DataSet import DataSet
 
 
-class ExcelReader(object):
+class ExcelReader():
     """Excelreader - Wrapper for SetReader
 
     Attributes:
@@ -35,7 +35,7 @@ class ExcelReader(object):
             self.sheets[sheet] = sr.sets
 
 
-class SetReader(object):
+class SetReader():
     """SetReader - Read data from one sheet in an Excel file
 
     Attributes:
@@ -82,7 +82,7 @@ class SetReader(object):
     def _get_inner_dimensions(self):
         """ Get the dimensions of the innter matrix
         """
-        for k, v in self.sets.items():
+        for _, v in self.sets.items():
             n_cols = []
             n_rows = []
             idx = v.row
@@ -106,7 +106,7 @@ class SetReader(object):
     def _get_outer_dimensions(self):
         """ Get the number of wells, layout of the plate
         """
-        for k, v in self.sets.items():
+        for _, v in self.sets.items():
             # we stored the data start, not the header start!
             row = str(v.row -1)
             # we skip X Read/Y Read
@@ -129,12 +129,12 @@ class SetReader(object):
     def _read_data(self):
         """ Read the actual data to an np array
         """
-        for k, v in self.sets.items():
+        for _, v in self.sets.items():
 
             # pre-alloc data
             data = []
             for i in range(v.n_wells):
-                data.append(np.zeros( (v.inner_x, v.inner_y) ))
+                data.append(np.zeros((v.inner_x, v.inner_y)))
 
             n_rows = v.inner_x * v.inner_y
             for iRow in range(v.row, v.row+n_rows):
@@ -150,7 +150,7 @@ class SetReader(object):
                         val = 0
 
                     # we have to swap x and y for numpy !!!
-                    data[idx_outer][(inner_y,inner_x)] = val
+                    data[idx_outer][(inner_y, inner_x)] = val
                     idx_outer += 1
 
                     v.data = data

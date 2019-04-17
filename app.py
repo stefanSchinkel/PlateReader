@@ -16,6 +16,11 @@ app = Flask(__name__)
 
 def allowed_file(filename):
     """Check incoming file for allowed types
+
+    Args:
+        filename (str): name of file
+    Return:
+        (bool) whether file is acceptable
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -27,15 +32,13 @@ def save_file(file):
     Args:
         fil (obj): flask file object
     """
-    save_dir = os.path.join(
-        app.instance_path,
-        UPLOAD_DIR,
-        str(uuid.uuid4()).split("-")[0]
-    )
+    set_id = str(uuid.uuid4()).split("-")[0]
+    save_dir = os.path.join(app.config['UPLOAD_DIR'], set_id)
     os.makedirs(save_dir)
     save_name = os.path.join(save_dir, "data.xlsx")
     file.save(save_name)
-    return save_name
+
+    return save_name, set_id
 
 def render_images(ex_reader, set_id):
     """ Renders all images in an Excel document
@@ -112,21 +115,27 @@ def upload_file():
         return redirect('/')
 
     file = request.files['file']
-    # if user does not select file, browser also
-    # submit a empty part without filename
+
+    # no file selected or empty submission
     if file.filename == '':
         flash('No selected file')
         return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = save_file(file)
-        set_id = filename.split("/")[-2]
 
-    # to all the rendering and stuff
+    # process only valid files
+    if file and allowed_file(file.filename):
+        filename, set_id = save_file(file)
+    else:
+        flash('Only .xlsx and .xls files are accepted')
+        return redirect('/')
+
+    # do all the rendering and creation of static assets
     process_file(filename, set_id)
 
+    # redirect client to created page
     return redirect("/results/{}/index.html".format(set_id))
 
 # we need a route to serve the computed images
+# this should go to an nginx at some point
 @app.route('/results/<path:filepath>')
 def serve(filepath):
     """Serving of static files"""
